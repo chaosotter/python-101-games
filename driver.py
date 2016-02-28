@@ -1,6 +1,5 @@
 import sys
 
-from lib import common
+from lib.games import acey_ducey
 
-common.Hello('Foo', '0.1.1')
-print common.Input('>>')
+acey_ducey.Run()
