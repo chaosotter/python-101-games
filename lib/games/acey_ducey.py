@@ -3,7 +3,7 @@ import random
 from .. import common
 from .. import term
 
-VERSION = '0.0.2'
+VERSION = '0.0.3'
 
 def CardString(card):
     """Converts a card value (13*suit + number) to a display string."""
@@ -24,10 +24,10 @@ def ReadBet(cash):
     return bet
 
 def Instructions():
-    print 'The computer deals two cards face up.  Place your bet according'
-    print 'to whether you think the next card will be between the first two.'
+    print "The computer deals two cards face up.  Place your bet according"
+    print "to whether you think the next card will be between the first two."
     print
-    print 'The dealer wins on a tie, aces are high, and you keep playing'
+    print "The dealer wins on a tie, aces are high, and you keep playing"
     print "until you're either bored or broke."
     print
 

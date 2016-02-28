@@ -3,7 +3,7 @@ import random
 from .. import common
 from .. import term
 
-VERSION = '0.0.1'
+VERSION = '0.0.2'
 
 # Status values stored within the maze array.
 WALL  = 0
@@ -93,19 +93,19 @@ def GetSize(which, min, max):
     return common.InputInt(prompt, min, max)
 
 def Instructions():
-    print 'The computer will generate a maze of the complexity you specify.'
-    print 'There will be only one path through the maze, and an infinite'
-    print 'variety of mazes can be generated.'
+    print "The computer will generate a maze of the complexity you specify."
+    print "There will be only one path through the maze, and an infinite"
+    print "variety of mazes can be generated."
     print
 
 #------------------------------------------------------------------------
 
 def Run():
-    common.Hello("Amazing Maze Generator", VERSION)
+    common.Hello('Amazing Maze Generator', VERSION)
     Instructions()
 
-    cols = GetSize("width",  1, 39) * 2 + 1
-    rows = GetSize("height", 1, 39) * 2 + 1
+    cols = GetSize('width',  1, 39) * 2 + 1
+    rows = GetSize('height', 1, 39) * 2 + 1
 
     maze = Maze(rows, cols)
     maze.Generate()
