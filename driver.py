@@ -1,6 +1,6 @@
 import sys
 
-from lib.games import amazing
+from lib.games import animal
 
 #acey_ducey.Run()
-amazing.Run()
+animal.Run()
