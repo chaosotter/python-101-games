@@ -3,7 +3,7 @@ import random
 from .. import common
 from .. import term
 
-VERSION = '0.0.1'
+VERSION = '0.0.2'
 
 def CardString(card):
     """Converts a card value (13*suit + number) to a display string."""
@@ -24,10 +24,10 @@ def ReadBet(cash):
     return bet
 
 def Instructions():
-    print "The computer deals two cards face up.  Place your bet according"
-    print "to whether you think the next card will be between the first two."
+    print 'The computer deals two cards face up.  Place your bet according'
+    print 'to whether you think the next card will be between the first two.'
     print
-    print "The dealer wins on a tie, aces are high, and you keep playing"
+    print 'The dealer wins on a tie, aces are high, and you keep playing'
     print "until you're either bored or broke."
     print
 
@@ -55,7 +55,7 @@ def Value(card):
 #------------------------------------------------------------------------
 
 def Run():
-    common.Hello("Acey-Ducey Card Game", VERSION)
+    common.Hello('Acey-Ducey Card Game', VERSION)
     Instructions()
 
     cash = 100
@@ -72,10 +72,10 @@ def Run():
             
         if (Value(a) < Value(c)) and (Value(c) < Value(b)):
             term.WriteLn(term.BOLD_GREEN, 'You win!')
-            cash = cash + bet
+            cash += bet
         else:
             term.WriteLn(term.BOLD_RED, 'Sorry, you lose.')
-            cash = cash - bet
+            cash -= bet
 
         term.WriteLn(term.RESET)
 

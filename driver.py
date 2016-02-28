@@ -1,5 +1,6 @@
 import sys
 
-from lib.games import acey_ducey
+from lib.games import amazing
 
-acey_ducey.Run()
+#acey_ducey.Run()
+amazing.Run()
