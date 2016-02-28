@@ -77,6 +77,6 @@ def Run():
             term.WriteLn(term.BOLD_RED, 'Sorry, you lose.')
             cash = cash - bet
 
-        term.Write(term.RESET)
+        term.WriteLn(term.RESET)
 
     term.WriteLn(term.BOLD_WHITE, "You're broke -- get outta here!", term.RESET)
