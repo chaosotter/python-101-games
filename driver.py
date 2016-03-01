@@ -1,6 +1,6 @@
 import sys
 
-from lib.games import animal
+from lib.games import awari
 
 #acey_ducey.Run()
-animal.Run()
+awari.Run()

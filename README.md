@@ -22,4 +22,9 @@ at meiss.mark `at` gmail.com to learn more about the project status.
 
 ## Project Status
 
-* `term` module converted and tested from old source I had lying about.
+* `term` and `common` modules rewritten with better APIs.
+* Completed and tested games:
+  * Acey-Ducey
+  * Amazing
+  * Animal
+  * Awari
