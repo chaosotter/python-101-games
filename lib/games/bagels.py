@@ -1,47 +1,35 @@
-import lib.ansi, lib.squunkin, random
+import random
 
-ansi    = lib.ansi.Ansi()
-VERSION = "0.01"
+from .. import common
+from .. import term
+
+VERSION = '0.0.1'
 
 
-def checkBagels(number, guess):
-    if (number.find(guess[0]) == -1) and \
-       (number.find(guess[1]) == -1) and \
-       (number.find(guess[2]) == -1):
-        print ansi.boldRed() + "BAGELS",
+def CheckBagels(number, guess):
+    if ((number.find(guess[0]) == -1) and
+        (number.find(guess[1]) == -1) and
+        (number.find(guess[2]) == -1)):
+        term.Write(term.BOLD_RED, 'BAGELS ')
 
-        
-def checkFermi(number, guess):
-    for i in range(0, 3):
+def CheckFermi(number, guess):
+    for i in xrange(3):
         if guess[i] == number[i]:
-            print ansi.boldGreen() + "FERMI",
+            term.Write(term.BOLD_GREEN, 'FERMI ')
 
-            
-def checkPico(number, guess):
-    for i in range(0, 3):
+def CheckPico(number, guess):
+    for i in xrange(3):
         if (guess[i] == number[(i+1) % 3]) or (guess[i] == number[(i+2) % 3]):
-            print ansi.boldYellow() + "PICO",
+            term.Write(term.BOLD_YELLOW, 'PICO ')
 
+def Evaluate(number, guess):
+    term.WriteLn()
+    CheckPico(number, guess)
+    CheckFermi(number, guess)
+    CheckBagels(number, guess)
+    term.WriteLn()
 
-def evaluate(number, guess):
-    print
-    checkPico  (number, guess)
-    checkFermi (number, guess)
-    checkBagels(number, guess)
-    print
-
-    
-def instructions():
-    print "I will think of a number with three digits, all different.  Try to"
-    print "guess it!  I'll give you some clue after each guess:"
-    print
-    print "PICO means that a digit is correct, but in the wrong place."
-    print "FERMI means that a digit is correct and in the right place."
-    print "BAGELS means that you're entirely wrong!"
-    print
-
-
-def pickNumber():
+def PickNumber():
     a = random.randint(1, 9)
     b = random.randint(0, 9)
     c = random.randint(0, 9)
@@ -50,41 +38,53 @@ def pickNumber():
         c = random.randint(0, 9)
     return str(a) + str(b) + str(c)
 
-
-def validGuess(guess):
-    s      = str(guess)
+def ValidGuess(guess):
+    s = str(guess)
     result = (s[0] != s[1]) and (s[0] != s[2]) and (s[1] != s[2])
     if not result:
-        print ansi.boldRed() + "\nAs I said, all three digits are different...\n"
+        term.WriteLn(term.BOLD_RED)
+        term.WriteLn('As I said, all three digits are different...')
+        term.WriteLn()
     return result
 
+def Instructions():
+    print "I will think of a number with three digits, all different.  Try to"
+    print "guess it!  I'll give you some clue after each guess:"
+    print
+    print "PICO means that a digit is correct, but in the wrong place."
+    print "FERMI means that a digit is correct and in the right place."
+    print "BAGELS means that you're entirely wrong!"
+    print
 
 #------------------------------------------------------------------------
 
-lib.squunkin.hello("Bagels", VERSION)
-instructions()
+def Run():
+    common.Hello("Bagels", VERSION)
+    Instructions()
 
-prompt = ansi.boldWhite() + "What's your guess?"
+    prompt = term.BOLD_WHITE + "What's your guess?"
 
-done = False
-while not done:
+    done = False
+    while not done:
+        number = PickNumber()
+        guess_num = 0
+        guess = 0
 
-    number   = pickNumber()
-    guessNum = 0
-    guess    = 0
+        while guess != number:
+            guess_num += 1
+            term.WriteLn(term.BOLD_CYAN)
+            term.WriteLn('This is guess #', guess_num)
 
-    while guess != number:
+            guess = str(common.InputInt(prompt, 100, 999))
+            while not ValidGuess(guess):
+                guess = str(common.InputInt(prompt, 100, 999))
 
-        guessNum += 1
-        print ansi.boldCyan() + "\nThis is guess #" + str(guessNum)
+            if number != guess:
+                Evaluate(number, guess)
 
-        guess = str(lib.squunkin.inputNumber(prompt, 100, 999))
-        while not validGuess(guess):
-            guess = str(lib.squunkin.inputNumber(prompt, 100, 999))
+        term.WriteLn(term.BOLD_MAGENTA)
+        term.WriteLn('YES!  You got it in ', guess_num, ' guesses!')
+        term.WriteLn()
 
-        if number != guess:
-            evaluate(number, guess)
-
-    print ansi.boldMagenta() + "\nYES!  You got it in", guessNum, "guesses!\n"
-    done = not lib.squunkin.inputYN("Another round (y/n)?")
-    print
+        done = not common.InputYN('Another round (y/n)?')
+        term.WriteLn()

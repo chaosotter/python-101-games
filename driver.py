@@ -1,6 +1,6 @@
 import sys
 
-from lib.games import awari
+from lib.games import bagels
 
 #acey_ducey.Run()
-awari.Run()
+bagels.Run()

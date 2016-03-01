@@ -28,3 +28,4 @@ at meiss.mark `at` gmail.com to learn more about the project status.
   * Amazing
   * Animal
   * Awari
+  * Bagels
