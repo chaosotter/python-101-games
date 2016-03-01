@@ -1,275 +1,284 @@
-import lib.ansi, lib.squunkin, random
+import random
 
-ansi    = lib.ansi.Ansi()
-VERSION = "0.01"
+from .. import common
+from .. import term
 
+VERSION = '0.0.1'
+
+# Constants for the current possession.
 HOME = 0
 AWAY = 1
 
+# Constants for the possible plays.
 PLAY_30    = 1
 PLAY_15    = 2
 PLAY_LAYUP = 3
 PLAY_SET   = 4
 
+# Constants for the possible defenses.
 DEFENSE_PRESS      = 1
 DEFENSE_MAN_TO_MAN = 2
 DEFENSE_ZONE       = 3
 DEFENSE_NONE       = 4
 
 
-def addPoints(which, howMany):
-    score[which] += howMany
-    printScore()
+def AddPoints(which, how_many):
+    score[which] += how_many
+    PrintScore()
 
-
-def awayJump():
-    print ansi.boldWhite() + "Jump shot!"
+def AwayJump():
+    term.WriteLn(term.BOLD_WHITE, 'Jump shot!')
     if (random.random() * 16.0 / (defense + 11)) <= 0.35:
-        print ansi.boldBlue() + "Shot is good."
-        addPoints(AWAY, 2)
+        term.WriteLn(term.BOLD_BLUE, 'Shot is good.')
+        AddPoints(AWAY, 2)
         return HOME
     else:
-        return awayJumpMiss()
+        return AwayJumpMiss()
 
-
-def awayJumpFoul():
+def AwayJumpFoul():
     if (random.random() * 16.0 / (defense + 11)) <= 0.90:
-        print "Player fouled.  Two shots."
-        doFoul(AWAY)
+        term.WriteLn('Player fouled.  Two shots.')
+        DoFoul(AWAY)
     else:
-        print ansi.boldRed() + "Offensive foul.  IU's ball."
+        term.WriteLn(term.BOLD_RED, "Offensive foul.  IU's ball.")
     return HOME
 
-
-def awayJumpMiss():
+def AwayJumpMiss():
     if (random.random() * 16.0 / (defense + 11)) <= 0.75:
-        print "Shot is off rim."
-        return awayJumpRebound()
+        term.WriteLn('Shot is off rim.')
+        return AwayJumpRebound()
     else:
-        return awayJumpFoul()
+        return AwayJumpFoul()
 
-
-def awayJumpRebound():
+def AwayJumpRebound():
     if (random.random() * (defense + 11) / 12.0) <= 0.50:
-        print ansi.boldRed() + "IU controls the rebound."
+        term.WriteLn(term.BOLD_RED, 'IU controls the rebound.')
         return HOME
     else:
-        print ansi.boldBlue() + opponent + " controls the rebound." + \
-              ansi.boldWhite()
-        return awayJumpSteal()
+        term.WriteLn(term.BOLD_BLUE, opponent, ' controls the rebound.',
+                     term.BOLD_WHITE)
+        return AwayJumpSteal()
 
-
-def awayJumpSteal():
+def AwayJumpSteal():
     if (defense == DEFENSE_PRESS) and (random.random() > 0.75):
-        print ansi.boldRed() + "Ball stolen.  Easy lay-up for IU!"
-        addPoints(HOME, 2)
+        term.WriteLn(term.BOLD_RED, 'Ball stolen.  Easy lay-up for IU!')
+        AddPoints(HOME, 2)
         return AWAY
     elif random.random() <= 0.50:
-        print "Pass back to " + opponent + " guard."
+        term.WriteLn('Pass back to ', opponent, ' guard.')
         return AWAY
     else:
-        return awayLayup(PLAY_LAYUP)
+        return AwayLayup(PLAY_LAYUP)
 
-
-def awayLayup(play):
+def AwayLayup(play):
     if play > PLAY_LAYUP:
-        print ansi.boldWhite() + "Set shot!"
+        term.WriteLn(term.BOLD_WHITE, 'Set shot!')
     else:
-        print ansi.boldWhite() + "Lay-up!"
+        term.WriteLn(term.BOLD_WHITE, 'Lay-up!')
     if (random.random() * 14.0 / (defense + 11)) <= 0.413:
-        print ansi.boldBlue() + "Shot is good."
-        addPoints(AWAY, 2)
+        term.WriteLn(term.BOLD_BLUE, 'Shot is good.')
+        AddPoints(AWAY, 2)
         return HOME
     else:
-        return awayLayupMiss()
+        return AwayLayupMiss()
 
+def AwayLayupMiss():
+    term.WriteLn('Shot missed.')
+    return AwayJumpRebound()
 
-def awayLayupMiss():
-    print "Shot missed."
-    return awayJumpRebound()
-
-
-def checkHalftime(time):
+def CheckHalftime(time):
     if time == 50:
-        print ansi.boldWhite() + "\n*** END OF FIRST HALF ***"
-        printScore()
+        term.WriteLn(term.BOLD_WHITE)
+        term.WriteLn('*** END OF FIRST HALF ***')
+        PrintScore()
         raise Exception
     return time
 
-
-def checkOvertime(time):
+def CheckOvertime(time):
     if (time >= 100) and (score[HOME] == score[AWAY]):
-        print ansi.boldWhite() + "\n*** END OF SECOND HALF ***"
-        printScore()
-        print ansi.boldWhite() + "Two-minute overtime!\n"
+        term.WriteLn(term.BOLD_WHITE)
+        term.WriteLn('*** END OF SECOND HALF ***')
+        PrintScore()
+        term.WriteLn(term.BOLD_WHITE, 'Two-minute overtime!')
+        term.WriteLn()
         time = 93
     return time
 
-
-def checkWarning(time):
+def CheckWarning(time):
     if time == 92:
-        print ansi.boldWhite() + "\nTwo minutes left in the game!\n"
+        term.WriteLn(term.BOLD_WHITE)
+        term.WriteLn('Two minutes left in the game!')
+        term.WriteLn()
     return time
 
-
-def doFoul(which):
+def DoFoul(which):
     if random.random() <= 0.49:
-        print "Shooter makes both shots."
-        addPoints(which, 2)
+        term.WriteLn('Shooter makes both shots.')
+        AddPoints(which, 2)
     elif random.random() <= 0.75:
-        print "Shooter makes one shot and misses one."
-        addPoints(which, 1)
+        term.WriteLn('Shooter makes one shot and misses one.')
+        AddPoints(which, 1)
     else:
-        print "Both shots missed."
-        printScore()
-
+        term.WriteLn('Both shots missed.')
+        PrintScore()
         
-def getDefense():
-    print ansi.boldWhite() + "\nSelect a defense:"
-    print ansi.boldYellow() + "  (1) " + ansi.reset() + "Press"
-    print ansi.boldYellow() + "  (2) " + ansi.reset() + "Man-to-Man"
-    print ansi.boldYellow() + "  (3) " + ansi.reset() + "Zone"
-    print ansi.boldYellow() + "  (4) " + ansi.reset() + "None"
-    print
-    return lib.squunkin.inputNumber("Your choice?", 1, 4)
+def GetDefense():
+    term.WriteLn(term.BOLD_WHITE)
+    term.WriteLn('Select a defense:')
+    term.WriteLn(term.BOLD_YELLOW, '  (1) ', term.RESET, 'Press')
+    term.WriteLn(term.BOLD_YELLOW, '  (2) ', term.RESET, 'Man-to-Man')
+    term.WriteLn(term.BOLD_YELLOW, '  (3) ', term.RESET, 'Zone')
+    term.WriteLn(term.BOLD_YELLOW, '  (4) ', term.RESET, 'None')
+    term.WriteLn()
+    return common.InputInt('Your choice?', 1, 4)
 
-
-def getPlay():
-    print ansi.boldWhite() + "\nSelect a play:"
-    print ansi.boldYellow() + "  (1) " + ansi.reset() + "Long Jump Shot (30')"
-    print ansi.boldYellow() + "  (2) " + ansi.reset() + "Short Jump Shot (15')"
-    print ansi.boldYellow() + "  (3) " + ansi.reset() + "Lay Up"
-    print ansi.boldYellow() + "  (4) " + ansi.reset() + "Set Shot"
-    print ansi.boldYellow() + "  (0) " + ansi.reset() + "Change Defense"
-    print
-    result = lib.squunkin.inputNumber("Your choice?", 0, 4)
+def GetPlay():
+    term.WriteLn(term.BOLD_WHITE)
+    term.WriteLn('Select a play:')
+    term.WriteLn(term.BOLD_YELLOW, '  (1) ', term.RESET, "Long Jump Shot (30')")
+    term.WriteLn(term.BOLD_YELLOW, '  (2) ', term.RESET, "Short Jump Shot (15')")
+    term.WriteLn(term.BOLD_YELLOW, '  (3) ', term.RESET, 'Lay Up')
+    term.WriteLn(term.BOLD_YELLOW, '  (4) ', term.RESET, 'Set Shot')
+    term.WriteLn(term.BOLD_YELLOW, '  (0) ', term.RESET, 'Change Defense')
+    term.WriteLn()
+    result = common.InputInt('Your choice?', 0, 4)
     if result == 0:
-        defense = getDefense()
-        return getPlay()
-    print
+        defense = GetDefense()
+        return GetPlay()
+    term.WriteLn()
     return result
 
+def GetOpponent():
+    term.WriteLn()
+    return common.Input('And who will be your opponent today?')
 
-def getOpponent():
-    print
-    return lib.squunkin.input("And who will be your opponent today?")
-
-
-def homeJump():
-    tick()
-    print ansi.boldWhite() + "Jump shot!"
+def HomeJump():
+    Tick()
+    term.WriteLn(term.BOLD_WHITE, 'Jump shot!')
     if random.random() <= (0.341 * (defense + 11) / 16.0):
-        print ansi.boldRed() + "Shot is good!"
-        addPoints(HOME, 2)
+        print term.WriteLn(term.BOLD_RED, 'Shot is good!')
+        AddPoints(HOME, 2)
         return AWAY
     else:
-        return homeJumpMiss()
+        return HomeJumpMiss()
 
-
-def homeJumpBlock():
+def HomeJumpBlock():
     if random.random() <= (0.782 * (defense + 11) / 16.0):
-        print "Shot is blocked!"
+        term.WriteLn('Shot is blocked!')
         if random.random() <= 0.50:
-            print ansi.boldBlue() + "Ball controlled by " + opponent + "."
+            term.WriteLn(term.BOLD_BLUE, 'Ball controlled by ', opponent, '.')
             return AWAY
         else:
-            print ansi.boldRed() + "Ball controlled by IU."
+            term.WriteLn(term.BOLD_RED, 'Ball controlled by IU.')
             return HOME
     else:
-        return homeJumpFoul()
+        return HomeJumpFoul()
 
-
-def homeJumpFoul():
+def HomeJumpFoul():
     if random.random() <= (0.843 * (defense + 11) / 16.0):
-        print "Shooter is fouled.  Two shots."
-        doFoul(HOME)
+        term.WriteLn('Shooter is fouled.  Two shots.')
+        DoFoul(HOME)
     else:
-        print "Charging foul.  IU loses the ball."
+        term.WriteLn('Charging foul.  IU loses the ball.')
     return AWAY
 
-
-def homeJumpMiss():
+def HomeJumpMiss():
     if random.random() <= (0.682 * (defense + 11) / 16.0):
-        print ansi.boldWhite() + "Shot is off-target."
-        return homeJumpRebound()
+        term.WriteLn(term.BOLD_WHITE, 'Shot is off-target.')
+        return HomeJumpRebound()
     else:
-        return homeJumpBlock()
+        return HomeJumpBlock()
 
-
-def homeJumpRebound():
+def HomeJumpRebound():
     if ((defense + 11) / 12.0 * random.random()) <= 0.45:
-        print ansi.boldBlue() + "Rebound to " + opponent + "..."
+        term.WriteLn(term.BOLD_BLUE, 'Rebound to ', opponent, '...')
         return AWAY
     else:
-        print ansi.boldRed() + "IU controls the rebound!" + ansi.boldWhite()
+        term.WriteLn(term.BOLD_RED, 'IU controls the rebound!', term.BOLD_WHITE)
         if random.random() <= 0.40:
-            return homeLayup(PLAY_LAYUP)
+            return HomeLayup(PLAY_LAYUP)
         else:
-            return homeJumpSteal()
+            return HomeJumpSteal()
 
-
-def homeJumpSteal():
+def HomeJumpSteal():
     if (defense == DEFENSE_PRESS) and (random.random() > 0.6):
-        print ansi.boldBlue() + "Pass stolen by " + opponent + " -- easy lay-up!"
-        addPoints(AWAY, 2)
+        term.WriteLn(term.BOLD_BLUE,
+                     'Pass stolen by ', opponent, ' -- easy lay-up!')
+        AddPoints(AWAY, 2)
     else:
-        print "Ball passed back to you."
+        term.WriteLn('Ball passed back to you.')
     return HOME
 
-
-def homeLayup(play):
-    tick()
+def HomeLayup(play):
+    Tick()
     if play == PLAY_SET:
-        print ansi.boldWhite() + "Set shot!"
+        term.WriteLn(term.BOLD_WHITE, 'Set shot!')
     else:
-        print ansi.boldWhite() + "Lay-up!"
+        term.WriteLn(term.BOLD_WHITE, 'Lay-up!')
     if (random.random() * 14.0 / (defense + 11)) <= 0.40:
-        print ansi.boldRed() + "Shot is good!  Two points."
-        addPoints(HOME, 2)
+        term.WriteLn(term.BOLD_RED, 'Shot is good!  Two points.')
+        AddPoints(HOME, 2)
         return AWAY
     else:
-        return homeLayupMiss()
+        return HomeLayupMiss()
 
-
-def homeLayupBlock():
+def HomeLayupBlock():
     if (random.random() * 14.0 / (defense + 11)) <= 0.925:
-        print ansi.boldBlue() + "Shot blocked.  " + opponent + "'s ball."
+        term.WriteLn(term.BOLD_BLUE, 'Shot blocked.  ', opponent, "'s ball.")
     else:
-        print ansi.boldBlue() + "Charging foul.  IU loses the ball."
+        term.WriteLn(term.BOLD_BLUE, 'Charging foul.  IU loses the ball.')
     return AWAY
 
-
-def homeLayupFoul():
+def HomeLayupFoul():
     if (random.random() * 14.0 / (defense + 11)) <= 0.875:
-        print "Shooter fouled.  Two shots."
-        doFoul(HOME)
+        term.WriteLn('Shooter fouled.  Two shots.')
+        DoFoul(HOME)
         return AWAY
     else:
-        return homeLayupBlock()
+        return HomeLayupBlock()
 
-
-def homeLayupMiss():
+def HomeLayupMiss():
     if (random.random() * 14.0 / (defense + 11)) <= 0.70:
-        print "Shot is off the rim."
-        return homeLayupRebound()
+        term.WriteLn('Shot is off the rim.')
+        return HomeLayupRebound()
     else:
-        return homeLayupFoul()
+        return HomeLayupFoul()
 
-
-def homeLayupRebound():
+def HomeLayupRebound():
     if random.random() <= 0.66:
-        print ansi.boldBlue() + opponent + " controls the rebound."
+        term.WriteLn(term.BOLD_BLUE, opponent, ' controls the rebound.')
         return AWAY
     else:
-        print ansi.boldRed() + "IU controls the rebound." + ansi.boldWhite()
+        term.WriteLn(term.BOLD_RED, 'IU controls the rebound.', term.BOLD_WHITE)
         if random.random() <= 0.40:
-            return homeLayup(PLAY_LAYUP)
+            return HomeLayup(PLAY_LAYUP)
         else:
-            print "Ball passed back to you."
+            term.WriteLn('Ball passed back to you.')
             return HOME
 
-    
-def instructions():
+def JumpBall():
+    term.WriteLn()
+    if random.random() <= 0.6:
+        term.WriteLn(term.BOLD_BLUE, opponent, ' controls the tap.')
+        return AWAY
+    else:
+        term.WriteLn(term.BOLD_RED, 'IU controls the tap!')
+        return HOME
+
+def PrintScore():
+    term.WriteLn(term.RESET)
+    term.Write('Score: ')
+    term.Write(term.BOLD_RED, 'IU ', score[HOME], ' ')
+    term.WriteLn(term.BOLD_BLUE, opponent, ' ', score[AWAY])
+
+def Tick():
+    global time
+    time += 1
+    time = CheckHalftime(time)
+    time = CheckWarning(time)
+    time = CheckOvertime(time)
+
+def Instructions():
     print "This is a (very loose) simulation of college basketball.  You will"
     print "play the role of Indiana University's team captain and call the plays."
     print
@@ -277,66 +286,39 @@ def instructions():
     print "your defensive strategy during the game, just select '0' for your shot."
     print
 
-
-def jumpBall():
-    print
-    if random.random() <= 0.6:
-        print ansi.boldBlue() + opponent + " controls the tap."
-        return AWAY
-    else:
-        print ansi.boldRed() + "IU controls the tap!"
-        return HOME
-
-
-def printScore():
-    print ansi.reset()    + "\nScore: ",
-    print ansi.boldRed()  + "IU "    +       str(score[HOME]) + " ",
-    print ansi.boldBlue() + opponent + " " + str(score[AWAY]) + "\n"
-
-
-def tick():
-    global time
-    time += 1
-    time = checkHalftime(time)
-    time = checkWarning (time)
-    time = checkOvertime(time)
-
-
 #------------------------------------------------------------------------
 
-lib.squunkin.hello("Basketball", VERSION)
-instructions()
+def Run():
+    common.Hello('Basketball', VERSION)
+    Instructions()
 
-defense  = getDefense()
-opponent = getOpponent()
+    global defense, opponent, time, score
+    defense = GetDefense()
+    opponent = GetOpponent()
+    time = 0
+    score = [ 0, 0 ]
 
-time     = 0
-score    = [ 0, 0 ]
-
-ball = jumpBall()
-
-while time < 100:
-
-    try:
-        if ball == HOME:
-            print ansi.boldRed() + "IU has the ball." + ansi.reset()
-            play = getPlay()
-            if (play == PLAY_15) or (play == PLAY_30):
-                ball = homeJump()
+    ball = JumpBall()
+    while time < 100:
+        try:
+            if ball == HOME:
+                term.WriteLn(term.BOLD_RED, 'IU has the ball.', term.RESET)
+                play = GetPlay()
+                if (play == PLAY_15) or (play == PLAY_30):
+                    ball = HomeJump()
+                else:
+                    ball = HomeLayup(play)
             else:
-                ball = homeLayup(play)
-            
-        else:
-            print ansi.boldBlue() + opponent + " has the ball." + ansi.reset()
-            tick()
-            play = (2.5 * random.random()) + 1
-            if play <= PLAY_30:
-                ball = awayJump()
-            else:
-                ball = awayLayup(play)
+                term.WriteLn(term.BOLD_BLUE, opponent, ' has the ball.', term.RESET)
+                Tick()
+                play = (2.5 * random.random()) + 1
+                if play <= PLAY_30:
+                    ball = AwayJump()
+                else:
+                    ball = AwayLayup(play)
+        except Exception:
+            ball = JumpBall()
 
-    except Exception:
-        ball = jumpBall()
-
-print ansi.boldWhite() + "\n*** GAME OVER ***"
-printScore()
+    term.WriteLn(term.BOLD_WHITE)
+    term.WriteLn('*** GAME OVER ***')
+    PrintScore()
