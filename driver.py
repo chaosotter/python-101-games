@@ -1,6 +1,6 @@
 import sys
 
-from lib.games import basketball
+from lib.games import batnum
 
 #acey_ducey.Run()
-basketball.Run()
+batnum.Run()
