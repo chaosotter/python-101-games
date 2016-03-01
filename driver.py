@@ -1,6 +1,6 @@
 import sys
 
-from lib.games import bagels
+from lib.games import banner
 
 #acey_ducey.Run()
-bagels.Run()
+banner.Run()
