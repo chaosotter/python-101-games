@@ -29,3 +29,7 @@ at meiss.mark `at` gmail.com to learn more about the project status.
   * Animal
   * Awari
   * Bagels
+  * Banner
+  * Basketball
+  * Batnum
+  * Battle
